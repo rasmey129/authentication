@@ -13,6 +13,8 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -23,7 +25,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key, required this.title}) : super(key: key);
+  const MyHomePage({super.key, required this.title});
   final String title;
 
   @override
@@ -35,7 +37,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _signOut() async {
     await _auth.signOut();
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
       content: Text('Signed out successfully'),
     ));
   }
@@ -50,7 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
             onPressed: () {
               _signOut();
             },
-            child: Text('Sign Out'),
+            child: const Text('Sign Out'),
           ),
         ],
       ),
@@ -68,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class RegisterEmailSection extends StatefulWidget {
-  RegisterEmailSection({Key? key, required this.auth}) : super(key: key);
+  const RegisterEmailSection({super.key, required this.auth});
   final FirebaseAuth auth;
 
   @override
@@ -80,27 +82,31 @@ class _RegisterEmailSectionState extends State<RegisterEmailSection> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _success = false;
-  bool _initialState = true;
+  final bool _initialState = true;
   String? _userEmail;
 
-  void _register() async {
-    try {
-      await widget.auth.createUserWithEmailAndPassword(
-        email: _emailController.text,
-        password: _passwordController.text,
-      );
-      setState(() {
-        _success = true;
-        _userEmail = _emailController.text;
-        _initialState = false;
-      });
-    } catch (e) {
-      setState(() {
-        _success = false;
-        _initialState = false;
-      });
-    }
+ void _register() async {
+  try {
+    await widget.auth.createUserWithEmailAndPassword(
+      email: _emailController.text,
+      password: _passwordController.text,
+    );
+    setState(() {
+      _success = true;
+      _userEmail = _emailController.text;
+    });
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ProfileScreen(auth: widget.auth)),
+    );
+  } catch (e) {
+    setState(() {
+      _success = false;
+    });
   }
+}
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +117,7 @@ class _RegisterEmailSectionState extends State<RegisterEmailSection> {
         children: <Widget>[
           TextFormField(
             controller: _emailController,
-            decoration: InputDecoration(labelText: 'Email'),
+            decoration: const InputDecoration(labelText: 'Email'),
             validator: (value) {
               if (value?.isEmpty ?? true) {
                 return 'Please enter some text';
@@ -121,7 +127,7 @@ class _RegisterEmailSectionState extends State<RegisterEmailSection> {
           ),
           TextFormField(
             controller: _passwordController,
-            decoration: InputDecoration(labelText: 'Password'),
+            decoration: const InputDecoration(labelText: 'Password'),
             validator: (value) {
               if (value?.isEmpty ?? true) {
                 return 'Please enter some text';
@@ -138,7 +144,7 @@ class _RegisterEmailSectionState extends State<RegisterEmailSection> {
                   _register();
                 }
               },
-              child: Text('Submit'),
+              child: const Text('Submit'),
             ),
           ),
           Container(
@@ -159,7 +165,7 @@ class _RegisterEmailSectionState extends State<RegisterEmailSection> {
 }
 
 class EmailPasswordForm extends StatefulWidget {
-  EmailPasswordForm({Key? key, required this.auth}) : super(key: key);
+  const EmailPasswordForm({super.key, required this.auth});
   final FirebaseAuth auth;
 
   @override
@@ -171,27 +177,29 @@ class _EmailPasswordFormState extends State<EmailPasswordForm> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _success = false;
-  bool _initialState = true;
+  final bool _initialState = true;
   String _userEmail = '';
 
   void _signInWithEmailAndPassword() async {
-    try {
-      await widget.auth.signInWithEmailAndPassword(
-        email: _emailController.text,
-        password: _passwordController.text,
-      );
-      setState(() {
-        _success = true;
-        _userEmail = _emailController.text;
-        _initialState = false;
-      });
-    } catch (e) {
-      setState(() {
-        _success = false;
-        _initialState = false;
-      });
-    }
+  try {
+    await widget.auth.signInWithEmailAndPassword(
+      email: _emailController.text,
+      password: _passwordController.text,
+    );
+    setState(() {
+      _success = true;
+      _userEmail = _emailController.text;
+    });
+    Navigator.push( 
+      context,
+      MaterialPageRoute(builder: (context) => ProfileScreen(auth: widget.auth)),
+    );
+  } catch (e) {
+    setState(() {
+      _success = false;
+    });
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -201,13 +209,13 @@ class _EmailPasswordFormState extends State<EmailPasswordForm> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
-            child: Text('Test sign in with email and password'),
             padding: const EdgeInsets.all(16),
             alignment: Alignment.center,
+            child: Text('Test sign in with email and password'),
           ),
           TextFormField(
             controller: _emailController,
-            decoration: InputDecoration(labelText: 'Email'),
+            decoration: const InputDecoration(labelText: 'Email'),
             validator: (value) {
               if (value?.isEmpty ?? true) {
                 return 'Please enter some text';
@@ -217,7 +225,7 @@ class _EmailPasswordFormState extends State<EmailPasswordForm> {
           ),
           TextFormField(
             controller: _passwordController,
-            decoration: InputDecoration(labelText: 'Password'),
+            decoration: const InputDecoration(labelText: 'Password'),
             validator: (value) {
               if (value?.isEmpty ?? true) {
                 return 'Please enter some text';
@@ -234,7 +242,7 @@ class _EmailPasswordFormState extends State<EmailPasswordForm> {
                   _signInWithEmailAndPassword();
                 }
               },
-              child: Text('Submit'),
+              child: const Text('Submit'),
             ),
           ),
           Container(
@@ -250,6 +258,33 @@ class _EmailPasswordFormState extends State<EmailPasswordForm> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+class ProfileScreen extends StatelessWidget {
+  final FirebaseAuth auth;
+
+  const ProfileScreen({super.key, required this.auth});
+
+  @override
+  Widget build(BuildContext context) {
+    final user = auth.currentUser;
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Profile'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              await auth.signOut();
+              Navigator.pop(context); 
+            },
+          ),
+        ],
+      ),
+      body: Center(
+        child: Text('Welcome, ${user?.email ?? 'User'}'),
       ),
     );
   }
